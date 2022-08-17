@@ -3,7 +3,20 @@
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
 # Read `man 5 sway` for a complete reference.
+gaps inner 15
+gaps outer 0
+smart_gaps on
+smart_borders on
 
+##-- Colors ------------------------------
+
+# class                 border  backgr. text    indicator child_border
+client.focused          #DA6E89 #DA6E89 #FFFFFF #98C379   #DA6E89
+client.focused_inactive #61AFEF #61AFEF #1E222A #98C379   #61AFEF
+client.unfocused        #2C3038 #2C3038 #FFFFFF #98C379   #2C3038
+client.urgent           #C678DD #C678DD #FFFFFF #98C379   #C678DD
+client.placeholder      #1E222A #1E222A #FFFFFF #98C379   #1E222A
+client.background       #8392A2
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -23,12 +36,15 @@ set $menu dmenu_path | dmenu | xargs swaymsg exec --
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/default.png fill
+exec swww /home/archild/Pictures/wallpaper/default.gif
+#output * bg /usr/share/backgrounds/default.png fill
 #
 # Example configuration:
 #
+
 output DP-1 resolution 1920x1080 position 0,0
 output eDP-1 resolution 1920x1080 position 0,1080
+#tent/tablet mode
 output eDP-1 transform 180
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -57,9 +73,14 @@ output eDP-1 transform 180
 #       natural_scroll enabled
 #       middle_emulation enabled
 #   }
+#multi monitor setup
 input touch map_to_output eDP-1
 input type:tablet_tool calibration_matrix -1 0 1 0 -0.5 1
 input type:touch calibration_matrix -1 0 1 0 -0.5 1
+#single monitor setup
+# input touch map_to_output eDP-1
+# input type:tablet_tool calibration_matrix -1 0 1 0 -1 1
+# input type:touch calibration_matrix -1 0 1 0 -1 1
 
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
@@ -73,10 +94,6 @@ input type:touch calibration_matrix -1 0 1 0 -0.5 1
 
     # Kill focused window
     bindsym $mod+Shift+q kill
-
-    # Start your launcher
-    bindsym $mod+d exec $menu
-
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
     # Despite the name, also works for non-floating windows.
@@ -116,6 +133,12 @@ input type:touch calibration_matrix -1 0 1 0 -0.5 1
 #
 # Workspaces:
 #
+    workspace 1 output DP-1
+    workspace 2 output eDP-1
+    workspace 3 output eDP-1
+    workspace 4 output eDP-1
+    workspace 5 output eDP-1
+    workspace 6 output eDP-1
     # Switch to workspace
     bindsym $mod+1 workspace number 1
     bindsym $mod+2 workspace number 2
@@ -207,17 +230,7 @@ bindsym $mod+r mode "resize"
 #
 # Read `man 5 sway-bar` for more information about this section.
 bar {
-    position top
-
-    # When the status_command prints a new line to stdout, swaybar updates.
-    # The default just shows the current date and time.
-    status_command while date +'%Y-%m-%d %I:%M:%S %p'; do sleep 1; done
-
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
+    swaybar_command waybar
 }
 
 include /etc/sway/config.d/*
@@ -225,4 +238,3 @@ include /etc/sway/config.d/*
 #exec sway output eDP-1 transform 180
 #exec sway output eDP-1 pos 0 1080
 #exec sway output DP-1 pos 0 0
-exec touchegg

@@ -1,0 +1,10 @@
+[Unit]
+Description="Initialize the sww daemon"
+After=syslog.target network.target multi-user.target nodm.service
+
+[Service]
+ExecStart=/home/archild/bin/swww init
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
