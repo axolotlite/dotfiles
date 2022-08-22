@@ -36,7 +36,7 @@ set $menu dmenu_path | dmenu | xargs swaymsg exec --
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-exec swww /home/archild/Pictures/wallpaper/default.gif
+exec swww img -o eDP-1 Pictures/wallpapers/default.gif
 #output * bg /usr/share/backgrounds/default.png fill
 #
 # Example configuration:
@@ -75,7 +75,9 @@ output eDP-1 transform 180
 #   }
 #multi monitor setup
 input touch map_to_output eDP-1
+#stylus config for tent mode
 input type:tablet_tool calibration_matrix -1 0 1 0 -0.5 1
+#touch screen config for tent mode
 input type:touch calibration_matrix -1 0 1 0 -0.5 1
 #single monitor setup
 # input touch map_to_output eDP-1
@@ -238,3 +240,4 @@ include /etc/sway/config.d/*
 #exec sway output eDP-1 transform 180
 #exec sway output eDP-1 pos 0 1080
 #exec sway output DP-1 pos 0 0
+exec /var/home/archild/.config/sway/touche_scripts/startup.sh

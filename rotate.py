@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#https://gist.githubusercontent.com/ei-grad/4d9d23b1463a99d24a8d/raw/rotate.py
 from time import sleep
 from os import path as op
 import sys
@@ -21,7 +21,7 @@ for basedir in glob('/sys/bus/iio/devices/iio:device*'):
 else:
     sys.stderr.write("Can't find an accellerator device!\n")
     sys.exit(1)
-scale = float(read('in_accel_scale'))
+scale = float(read('in_accel_scale')) * 10.0
 
 g = 7.0  # (m^2 / s) sensibility, gravity trigger
 
@@ -47,19 +47,12 @@ if __name__ == '__main__':
     accel_x = bdopen('in_accel_x_raw')
     accel_y = bdopen('in_accel_y_raw')
 
-    current_state = None
+    x = read_accel(accel_x)
+    y = read_accel(accel_y)
 
-    while True:
-        x = read_accel(accel_x)*10
-        y = read_accel(accel_y)*10
-        print("X: ",x,"\nY: ",y)
-#        print("accel_X: ",accel_x,"\naccel_Y: ",accel_y)
-        if(current_state != None):
-            print("current state: ",STATES[current_state]['rot'])
-        for i in range(4):
-            print(STATES[i]['check'](x,y))
-            if STATES[i]['check'](x, y):
-                current_state = i
-#                rotate(i)
-                break
-        sleep(1)
+    for i in range(4):
+        if STATES[i]['check'](x, y):
+            print(STATES[i]['rot'])
+            print(STATES[i]['coord'])
+            print(STATES[i]['touchpad'])
+            break
