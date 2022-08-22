@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 #https://gist.githubusercontent.com/ei-grad/4d9d23b1463a99d24a8d/raw/rotate.py
-from time import sleep
 from os import path as op
+from os import environ as env
 import sys
-from subprocess import check_call, check_output
 from glob import glob
-
 
 def bdopen(fname):
     return open(op.join(basedir, fname))
@@ -21,18 +19,20 @@ for basedir in glob('/sys/bus/iio/devices/iio:device*'):
 else:
     sys.stderr.write("Can't find an accellerator device!\n")
     sys.exit(1)
-scale = float(read('in_accel_scale')) * 10.0
+
+#i took it from in_accel_scale directly
+scale = 0.098066500 * 10.0
 
 g = 7.0  # (m^2 / s) sensibility, gravity trigger
 
 STATES = [
-    {'rot': 'normal', 'coord': '1 0 0 0 1 0 0 0 1', 'touchpad': 'enable',
+    {'rot': 'normal', 'coord': '1 0 0 0 1 0 0 0 1',
      'check': lambda x, y: y <= -g},
-    {'rot': 'inverted', 'coord': '-1 0 1 0 -1 1 0 0 1', 'touchpad': 'disable',
+    {'rot': 'inverted', 'coord': '-1 0 1 0 -1 1 0 0 1',
      'check': lambda x, y: y >= g},
-    {'rot': 'left', 'coord': '0 -1 1 1 0 0 0 0 1', 'touchpad': 'disable',
+    {'rot': 'left', 'coord': '0 -1 1 1 0 0 0 0 1',
      'check': lambda x, y: x >= g},
-    {'rot': 'right', 'coord': '0 1 0 -1 0 1 0 0 1', 'touchpad': 'disable',
+    {'rot': 'right', 'coord': '0 1 0 -1 0 1 0 0 1', 
      'check': lambda x, y: x <= -g},
 ]
 
@@ -54,5 +54,4 @@ if __name__ == '__main__':
         if STATES[i]['check'](x, y):
             print(STATES[i]['rot'])
             print(STATES[i]['coord'])
-            print(STATES[i]['touchpad'])
             break
