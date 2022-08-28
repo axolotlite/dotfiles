@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 #https://gist.githubusercontent.com/ei-grad/4d9d23b1463a99d24a8d/raw/rotate.py
+from time import sleep
 from os import path as op
-from os import environ as env
 import sys
+from subprocess import check_call, check_output
 from glob import glob
+
 
 def bdopen(fname):
     return open(op.join(basedir, fname))
@@ -20,21 +22,45 @@ else:
     sys.stderr.write("Can't find an accellerator device!\n")
     sys.exit(1)
 
-#i took it from in_accel_scale directly
-scale = 0.098066500 * 10.0
+
+#devices = check_output(['xinput', '--list', '--name-only']).splitlines()
+
+#touchscreen_names = ['touchscreen', 'wacom']
+#touchscreens = [i for i in devices if any(j in i.lower() for j in touchscreen_names)]
+
+#disable_touchpads = False
+
+#touchpad_names = ['touchpad', 'trackpoint']
+#touchpads = [i for i in devices if any(j in i.lower() for j in touchpad_names)]
+
+scale = float(read('in_accel_scale')) * 10
 
 g = 7.0  # (m^2 / s) sensibility, gravity trigger
 
 STATES = [
-    {'rot': 'normal', 'coord': '1 0 0 0 1 0 0 0 1',
+    {'rot': '0', 'coord': '1 0 0 0 1 0 0 0 1', 'touchpad': 'enable',
      'check': lambda x, y: y <= -g},
-    {'rot': 'inverted', 'coord': '-1 0 1 0 -1 1 0 0 1',
+    {'rot': '180', 'coord': '-1 0 1 0 -1 1 0 0 1', 'touchpad': 'disable',
      'check': lambda x, y: y >= g},
-    {'rot': 'left', 'coord': '0 -1 1 1 0 0 0 0 1',
+    {'rot': '270', 'coord': '0 -1 1 1 0 0 0 0 1', 'touchpad': 'disable',
      'check': lambda x, y: x >= g},
-    {'rot': 'right', 'coord': '0 1 0 -1 0 1 0 0 1', 
+    {'rot': '90', 'coord': '0 1 0 -1 0 1 0 0 1', 'touchpad': 'disable',
      'check': lambda x, y: x <= -g},
 ]
+
+def toggle():
+    check_call(["swaymsg", "layout", "toggle"])
+def rotate(state):
+    s = STATES[state]
+    check_call(["swaymsg","output","eDP-1","transform",s['rot']])
+#    for dev in touchscreens if disable_touchpads else (touchscreens + touchpads):
+#        check_call([
+#            'xinput', 'set-prop', dev,
+#            'Coordinate Transformation Matrix',
+#        ] + s['coord'].split())
+#    if disable_touchpads:
+#        for dev in touchpads:
+#            check_call(['xinput', s['touchpad'], dev])
 
 
 def read_accel(fp):
@@ -42,16 +68,27 @@ def read_accel(fp):
     return float(fp.read()) * scale
 
 
-if __name__ == '__main__':
+if __name__ != '__main__':
 
     accel_x = bdopen('in_accel_x_raw')
     accel_y = bdopen('in_accel_y_raw')
 
-    x = read_accel(accel_x)
-    y = read_accel(accel_y)
-
-    for i in range(4):
-        if STATES[i]['check'](x, y):
-            print(STATES[i]['rot'])
-            print(STATES[i]['coord'])
-            break
+    current_state = None
+    while True:
+        x = read_accel(accel_x)
+        y = read_accel(accel_y)
+        for i in range(4):
+            print(current_state)
+            if i == current_state:
+                continue
+            if STATES[i]['check'](x, y):
+                if(current_state in [1,2]):
+                    if(i not in [1,2]):
+                        toggle()
+                elif(current_state in [3,4]):
+                    if(i not in [3,4]):
+                        toggle()
+                current_state = i
+                rotate(i)
+                break
+        sleep(1)
