@@ -1,0 +1,116 @@
+{
+    "layer": "bottom", // Waybar at top layer
+    "position": "bottom", // Waybar position (top|bottom|left|right)
+    "height": 40, // Waybar height (to be removed for auto height)
+    "margin-top": 0,
+    "margin-left": 10,
+    "margin-right": 10,
+    "output": "eDP-1",
+    "spacing": 0, // Gaps between modules (4px)
+    "modules-left": ["custom/logo", "custom/rofi", "sway/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/nmclicheck", "pulseaudio", "backlight", "cpu", "temperature", "memory", "custom/space", "tray", "custom/power"],
+    "sway/workspaces": {
+	"all-outputs": true,
+	"format": "{icon}",
+	"persistent_workspaces": {
+		"2": [],
+		"3": [],
+		"4": [],
+		"5": [],
+		"6": []
+	},
+        "format-icons": {
+               "urgent" : " ",
+               "focused" : " ",
+               "default" : " "
+         }
+
+    },
+    "clock": {
+        // "timezone": "America/Chicago",
+        "format": "{:%D (%a)  %T}",
+	"tooltip": true,
+	"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+	"interval": 1
+    },
+    "cpu": {
+        "format": "{usage}% ",
+        "tooltip": false
+    },
+    "memory": {
+        "format": "{}% "
+    },
+    "backlight": {
+        // "device": "acpi_video1",
+        "format": "{percent}% {icon}",
+        "format-icons": ["", ""]
+    },
+    "temperature": {
+        // "thermal-zone": 2,
+        "hwmon-path": "/sys/class/hwmon/hwmon1/temp1_input",
+        "critical-threshold": 70,
+        // "format-critical": "{temperatureC}°C {icon}",
+        "format": "{temperatureC}°C {icon}",
+        "format-icons": ["", "", ""]
+    },
+    "battery": {
+        "states": {
+            "good": 90,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{capacity}% {icon}",
+        "format-icons": ["", "", "", "", ""],
+	"interval": 60
+    },
+    "pulseaudio": {
+        "scroll-step": 5,
+        "format": "{volume}% {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+	"on-click": "amixer set Master toggle",
+        "on-click-right": "pavucontrol"
+    },
+    "custom/rofi":{
+        "format": "[0]",
+        "on-click": "exec rofi -show drun -theme clean"
+    },
+    "custom/space": { 
+	// Show amount of disk space left
+	"exec": "df -h / --output=avail | tail -n 1",
+	"interval": 600
+    },
+    "custom/nmclicheck": {
+	// Checks networking with nmcli since the default one is buggy.
+	"exec": "echo    $(nmcli networking connectivity)",
+	"interval": 10,
+	"on-click": "footclient -e nmtui"
+    },
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10
+    },
+    "custom/power": {
+    "format": "  ",
+    "on-click": "wlogout",
+    "tooltip": true
+    },
+    "custom/logo": {
+    	// Displays a text logo.
+	"format": "[~]",
+	"tooltip": true,
+	"tooltip-format": "River WM",
+	"on-click": "foot"
+    },
+}

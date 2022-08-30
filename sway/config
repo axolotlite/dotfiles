@@ -41,7 +41,6 @@ exec swww img -o eDP-1 Pictures/wallpapers/default.gif
 #
 # Example configuration:
 #
-
 output DP-1 resolution 1920x1080 position 0,0
 output eDP-1 resolution 1920x1080 position 0,1080
 #tent/tablet mode
@@ -234,7 +233,6 @@ bindsym $mod+r mode "resize"
 bar {
     swaybar_command waybar
 }
-
 include /etc/sway/config.d/*
 
 #exec sway output eDP-1 transform 180
